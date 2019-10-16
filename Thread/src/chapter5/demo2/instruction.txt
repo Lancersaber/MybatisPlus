@@ -1,0 +1,8 @@
+    java.util.concurrent包提供了BlockingQueue接口及其实现类，它们相当于Producer-Consumer模式中
+的Channel角色。
+    BlockingQueue接口---阻塞队列
+☞   BlockingQueue接口表示的是在达到合适的状态之前线程一直阻塞(wait)的队列。
+BlockingQueue是java.util.Queue接口的子接口，拥有offer和poll方法等。但实际上，
+实现“阻塞”功能的方法是BlockingQueue接口固有的put方法和take方法
+
+    这个demo就是使用ArrayBlockingQueue来对demo1的table类进行改写

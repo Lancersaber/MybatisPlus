@@ -1,0 +1,1 @@
+    这个demo展示了Worker Thread 模式

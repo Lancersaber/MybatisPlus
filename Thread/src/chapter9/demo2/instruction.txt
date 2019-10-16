@@ -1,0 +1,11 @@
+这个demo展示了java.util.concurrent包提供的用于支持Future模式的类和接口
+    1、java.util.concurrent.Callable接口将“返回值的某种处理的调用”抽象化了。Callable接口声明了call方法。
+call方法与Runnable接口的run方法相似，不同的是call方法有返回值。Callable<String>这个表达式表示Callable接口的call方法
+的返回值的类型是String。
+    2、java.util.concurrent.Future接口相当于demo1中的Future角色。Future接口声明了用于获取值的get方法，但并没有声明设置值的
+方法。设置值的方法需要在实现Future接口的类中声明。Future<String>这个表达式表示“Future接口的get方法的返回值的类型是String”。
+除了get方法外，Future接口还声明了用于中断运行的cancel方法。
+    3、java.util.concurrent.FutureTask类是实现了Future接口的标准类。FutureTask类声明了用于获取值的get方法、用于中断方法的cancel方法、
+用于设置值的set方法，以及用于设置异常的setException方法。此外，由于FutureTask类还实现了Runnable接口，所以它还声明了run方法。
+    在创建FutureTask类的实例时，Callable对象会被传递给构造函数的参数。之后，如果线程调用FutureTask的run方法，那么在构造函数中
+接收到的参数---Callable对象的call方法就会被执行。换言之，调用FutureTask的run方法的线程也会调用call方法。

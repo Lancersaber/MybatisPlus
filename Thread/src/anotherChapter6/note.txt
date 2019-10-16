@@ -1,0 +1,51 @@
+6.2 Executor框架
+    任务是一组逻辑工作单元，而线程是使任务异步执行的机制。我们已经分析了两种通过线程来执行任务的策略，即把所有的任务放在单个线程
+中串行执行，以及将每个任务放在各自的线程中执行。这两种方式都存在一些严格的限制：串行执行的问题在于其糟糕的响应性和吞吐量，而"为每个
+任务分配一个线程"的问题在于资源管理的复杂性。
+    Executor基于生产者-消费者模式，提交任务的操作相当于生产者(生产待完成的工作单元)，执行任务的线程则相当于消费者(执行完这些工作单元)。
+如果要在程序中实现一个生产者-消费者的设计，那么最简单的方式通常就是使用Executor。
+
+6.2.3 线程池
+    线程池，从字面上看，是指管理一组同构工作线程的资源池。线程池是与工作队列(Work Queue)密切相关的，其中在工作队列中保存了所有了
+所有等待执行的任务。工作者线程(Worker Thread)的任务很简单：从工作队列中获取一个任务，执行任务，然后返回线程池并等待下一个任务。
+    在线程池中执行任务比为每个任务分配一个线程优势更多。通过重用现有的线程而不是创建新线程，可以在处理多个请求时分摊在线程创建和
+销毁过程中产生的巨大开销。另外一个额外的好处是，当请求到达时，工作线程通常已经存在，因为不会由于等待创建线程而延迟任务的执行，从而
+提高了响应性。通过适当调整线程池的大小，可以创建足够多的线程以便使处理器保持忙碌状态，同时还可以适当防止过多线程相互竞争资源而使得
+应用程序耗尽内存或失败。
+
+6.2.4 Executor的生命周期
+    为了解决执行服务的生命周期的问题，Executor扩展了ExecutorService接口，添加了一些用于生命周期管理的方法。
+    ExecutorService的生命周期有3种状态：运行、关闭和已终止。
+    ExecutorService在初始创建时处于运行状态。shutdown方法将执行平缓的关闭过程:不再接受新的任务，同时等待已经提交的任务执行完成--包括
+那些还未开始执行的任务。shutdownNow方法将执行粗暴的关闭过程：它将尝试关闭所有运行中的任务，并且不再启动队列中尚未开始执行的任务。
+
+6.3.5 CompletionService:Executor和BlockingQueue
+    如果向Executor提交了一组计算任务，并且希望在计算完成后获得结果，那么可以保留与每个任务关联的Future，然后反复使用get方法，同时
+将参数timeout指定为0，从而通过轮询来判断任务是否完成。这种方法有点繁琐，还好有一种更好的方法：完成服务(CompletionService)
+    CompletionService将Executor和BlockingQueue的功能融合在一起，你可以将Callable任务提交给它来执行，然后用类似于队列操作的take和
+poll等方法获得已完成的结果，而这些结果会在完成时被封装为Future。ExecutorCompletionService实现了CompletionService，并将计算部分委托
+给一个Executor。
+    ExecutorCompletionService的实现非常简单，在构造函数中创建一个BlockingQueue来保存计算完成的结果。当计算完成时，调用Future-Task
+中的done方法。当提交某个任务时，该任务将首先包装为一个QueueingFuture，这是一个FutureTask的一个子类，然后再改写子类的done方法，并将
+结果放入BlockingQueue中。
+
+    下面为QueueingFuture类的代码
+    class QueueingFuture<V> extends FutureTask<V>{
+        QueueingFuture(Callable<V> c){
+            super(c);
+        }
+
+        QueueingFuture(Runnable t,V r){
+            super(t,r);
+        }
+
+        protected void done(){
+            completionQueue.add(this)
+        }
+    }
+
+6.3.7 为任务设置时限
+    在支持时间限制的Future.get中支持这种需求：当结果可用时，它将立即返回，如果在指定时限中没有计算出结果，那么将抛出TimeoutException.
+    在使用限时任务时应该需要注意，当这些任务超时后应该立即停止，从而避免为继续计算一个不再使用的结果而浪费计算资源。如果一个限时的get方法
+抛出了TimeoutException，那么可以通过Future来取消任务。(在catch块中使用future.cancel())
+

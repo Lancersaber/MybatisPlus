@@ -1,0 +1,5 @@
+demo1中利用java.util.LinkedList和Guarded Suspension模式构成了RequestQueue类，实际上，
+J2SE 5.0中的java.util.concurrent 包中提供了与该RequestQueue类功能相同的一个类，那就是
+java.util.concurrent.LinkedBlockingQueue类。该类实现了java.util.concurrent.BlockingQueue接口。
+
+这个demo就是利用java.util.concurrent.LinkedBlockingQueue来改写demo1的

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lancer.Interface.EmplyeeMapper">
+    <!--
+    namespace:名称空间(将命名空间写为接口的全类名，表示将这个映射文件与该接口进行绑定)
+    id：唯一标识
+    resultType:返回值类型
+    #{id}：从传递过来的参数中取出id值
+    -->
+    <!--public Employee getEmployeeId(Integer id);-->
+    <!--将id名称改为接口中定义的方法名称，表示与该接口中的方法进行绑定-->
+    <select id="getEmployeeId" resultType="com.lancer.bean.Employee">
+    select * from tb1_employee where id = #{id}
+    </select>
+    <cache/>
+
+    <!--public List<Employee> getEmpsByConditionIf(Employee employee);-->
+    <select id="getEmpsByConditionIf" resultType="com.lancer.bean.Employee">
+        select * from  tb1_employee
+        <!--
+            test:判断表达式(OGNL语法)
+            从参数中取值进行判断
+            遇见特殊字符应该去写转义字符
+        -->
+      <where>
+          <if test="id!=null">
+              id=#{id}
+          </if>
+          <if test="lastName!=null &amp;&amp; lastName!=&quot;&quot;">
+              and  last_name like #{lastName}
+          </if>
+          <if test="email !=null and email.trim()!=&quot;&quot;">
+              and email=#{email}
+          </if>
+          <!--ognl会进行字符串与数字的转换判断 "0"==0-->
+          <if test="gender==0 or gender==1">
+              and gender=#{gender}
+          </if>
+
+          <!--
+            后面多出的and 或者 or where标签不能解决
+            prefix="":前缀，trim标签体中是整个拼串后的前缀
+            prefixOverrides="":前缀覆盖，去掉整个字符串前面多余的字符
+            suffix="":后缀，给拼串后的结果加一个后缀
+            suffixOverrides=""：去掉整个拼串后面多余的字符
+
+            把上面的if语句放入 这个trim标签中
+            trim标签自定义标签的截取规则
+          -->
+
+          <!--
+            两个内置参数：
+            不只是方法传递过来的参数可以用来判断，取值....
+            mybatis默认还有两个内置参数
+            _parameter:代表整个参数
+                   单个参数：_parameter 就是这个参数
+                   多个参数：参数会被封装为一个map，_parameter就是代表这个map
+            _databaseId:如果配置了databaseIdProvider标签
+                _databaseId就是代表当前数据库的别名
+          -->
+      </where>
+
+
+    </select>
+
+</mapper>

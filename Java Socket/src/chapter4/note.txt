@@ -1,0 +1,13 @@
+1、Java.nio包中的主要类
+java.nio包提供了支持非阻塞通信的类。
+    * ServerSocketChannel: ServerSocket的替代类，支持阻塞通信与非阻塞通信。
+    * SocketChannel：Socket的替代类，支持阻塞通信与非阻塞通信
+    * Selector： 为ServerSocketChannel监控接收连接就绪事件，为SocketChannel监控连接就绪、读就绪和写就绪事件。
+    * SelectionKey: 代替ServerSocketChannel及SocketChannel向 Selector 注册事件的句柄。当一个SelectionKey对象
+    位于Selector 对象的selected-keys 集合中时，就表示与这个SelectionKey对象相关的事件发生了。
+
+
+缓冲区：Buffer
+字符编码：Charset
+通道：Channel
+    SelectableChannel

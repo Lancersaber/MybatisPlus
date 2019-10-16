@@ -1,0 +1,6 @@
+这个demo展示了Producer-Consumer模式
+Producer(生产者)
+    Producer角色生成data角色，并将其传递给Channel角色。本例中由MakerThread扮演
+Consumer(消费者)
+    Consumer角色从Channel角色中获取Data角色并使用。本demo中由EaterThread扮演
+

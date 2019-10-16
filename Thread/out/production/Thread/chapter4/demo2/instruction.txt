@@ -1,0 +1,22 @@
+    介于“直接balk并返回”和“等待到守护线程条件成立为止”这两种极端的处理方法之间，还有一种处理方法，
+那就是“在守护条件成立之前等待一段时间”。在守护条件成立之前等待一段时间，如果到时条件还未成立，则直接
+balk。我们将这种处理称为guarded timed 或timeout
+
+    wait停止的几种情况
+    1、notify方法执行时
+    即obj的notify方法被执行后，线程被唤醒了的情况
+
+    2、notifyAll方法执行时
+    即obj的notifyAll方法被执行了的情况
+    notifyAll会唤醒实例的等待队列中的所有线程。不管是notify，还是notifyAll，线程被唤醒后，都必须重新获取obj的锁。
+
+    3、interrupt方法执行时
+    即线程的interrupt方法执行了的情况。
+    当被interrupt时，等待队列中的线程(与被notify、notifyAll时一样)会重新获取obj的锁，然后抛出InterruptedException异常。
+    notify和notifyAll这两个方法是用于调用实例的，而interrupt方法是用于调用线程的。
+
+    4、超时发生时
+    即wait方法的参数中指定的超时时间到期的情况
+    与被notify、notifyAll时一样，这时也要重新获取obj的锁。
+
+这个demo就是展示guarded timed 的实现的。

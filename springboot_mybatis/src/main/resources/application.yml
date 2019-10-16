@@ -1,0 +1,14 @@
+server:
+  port: 8080
+spring:
+  datasource:
+    name: test
+    url: jdbc:mysql://49.234.9.177:3306/mybatis
+    username: root
+    password: 3468989340
+    type: com.alibaba.druid.pool.DruidDataSource
+    #怎么配置druid的数据源
+  redis:
+    host: 49.234.9.177
+mybatis:
+  config-location: classpath:mybatis/mybatis-config.xml

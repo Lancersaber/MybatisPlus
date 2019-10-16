@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+    <!--配置文件的标签有先后顺序，必须严格按照顺序来编写，否则会报错-->
+
+    <!--
+        1、mybatis可以使用properties来引入外部properties配置文件的内容
+            两个子元素：
+            resource:引入类路径下的资源
+            url：引入网络路径或者磁盘路径下的资源
+
+            取出对应的值是用 ${}
+    -->
+    <properties resource="dbconfig.properties">
+
+    </properties>
+
+    <!--
+        2、settings包含很多重要的设置项
+        setting:用来设置每一个设置项
+            name：设置项名
+            value：设置项取值
+    -->
+    <settings>
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+        <setting name="logImpl" value="LOG4J"/>
+        <!--开启二级缓存,默认已经开启了-->
+        <!--<setting name="cacheEnabled" value="true"/>-->
+    </settings>
+
+    <!--
+        3、typeAliases
+        类型别名是为 Java 类型设置一个短的名字。 它只和 XML 配置有关，存在的意义仅在于用来减少类完全限定名的冗余。
+            type:指定要起别名的类型全类名；默认别名就是类名小写，employee
+            alias:指定要起的别名
+    -->
+    <typeAliases>
+        <typeAlias type="com.lancer.bean.Employee" alias="Employee"/>
+    </typeAliases>
+
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="${driver}"/>
+                <property name="url" value="${url}"/>
+                <property name="username" value="${username}"/>
+                <property name="password" value="${password}"/>
+            </dataSource>
+        </environment>
+    </environments>
+
+
+    <!--将写好的sql映射文件写到这里-->
+    <!--
+        mapper：
+            注册配置文件
+            resource：引用类路径下的sql映射文件
+            url：引用网络路径下或者磁盘路径下的sql映射文件
+
+        注册接口
+        class: 引用(注册)接口
+            1、有sql映射文件，映射文件名必须和接口同名，并且放在接口同一目录下
+            2、没有sql映射文件，所有的sql都是利用注解写在接口上
+            推荐：
+                比较重要的Dao接口写在接口上
+                不太重要的Dao接口为了快速开发使用注解
+    -->
+    <mappers>
+        <mapper resource="EmployeeMapper.xml"/>
+        <!--<mapper class="com.lancer.Interface.EmplyeeMapper"/>-->
+        <!--<package name="com.lancer.Interface"/>-->
+        <mapper resource="TestMapper.xml"/>
+    </mappers>
+</configuration>

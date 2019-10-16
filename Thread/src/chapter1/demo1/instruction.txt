@@ -1,0 +1,2 @@
+这个demo展现的是不使用Single Threaded Execution 模式的一个小案例。
+具体是过门案例

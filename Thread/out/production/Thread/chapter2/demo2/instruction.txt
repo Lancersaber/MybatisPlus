@@ -1,0 +1,9 @@
+指出这两个类中存在的一些安全性方面的问题
+
+答案
+☞   ImmutablePerson类的一个构造函数将MutablePerson作为了参数。该构造函数调用了MutablePerson类的getName方法和
+getAddress方法，如下所示。
+    this.name=person.getName();
+    this.address=person.getAddress();
+而这两个调用必须放入临界区中。
+    这是因为在调用getName之后、调用getAddress之前，可能会有其他线程使用MutablePerson的setPerson方法来改写address字段。

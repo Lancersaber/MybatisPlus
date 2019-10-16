@@ -1,0 +1,10 @@
+这个demo是体现技术信号量的(Semaphore n 信号量)
+
+      Single Threaded Execution 模式用于确保某个区域“只能由一个线程”执行。这种模式进一步扩展，以确保某个区域“最多只能由N个线程”执行。
+这时就要用计数信号量来控制线程数量。
+       java.util.concurrent 包提供了表示计数信号量的Semaphore类。
+       资源的许可个数(permits) 将通过Semaphore的构造函数来指定。
+       Semaphore 的acquire方法用于确保存在可用资源。当存在可用资源时，线程会立即从acquire 方法返回。同时信号量内部的资源个数会减1。如果
+没有可用资源，线程则阻塞在acquire 方法内，直至出现可用资源。
+       Semaphore 的release 方法用于释放资源。释放资源后，信号量内部的资源个数会增加 1.另外，如果acquire中存在等待的线程，那么其中一个线程
+会被唤醒，并从acquire 方法返回。

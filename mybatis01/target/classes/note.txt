@@ -1,0 +1,26 @@
+SqlSession对象和 Connection对象一样都是非线程安全的，每次使用都应该去获取新的对象。
+
+mybatis的全局配置文件：
+    包含数据库连接池信息
+    事务管理器信息
+    .....
+    系统运行环境信息
+    （如果不使用全局配置文件，就需要把所有需要的信息传入一个个对应的类中，很麻烦）
+
+
+mybatis逆向工程
+    mybatis的一个主要的特点就是需要程序员自己编写sql，那么如果表太多的话，难免会很麻烦，
+所以mybatis官方提供了一个逆向工程，可以针对单表自动生成mybatis执行所需要的代码（包括mapper.xml、mapper.java、po..）。
+一般在开发中，常用的逆向工程方式是通过数据库的表生成代码。
+
+mybatis的参数处理
+    单个参数时：mybatis不会做任何处理
+        #{参数名}：取出参数值
+    多个参数时：mybatis会做特殊处理
+        多个参数会被封装成一个map
+            key:param1...paramn
+            value:传入的参数值
+        #{}就是从map中获取指定的key
+
+        2、使用命名参数
+            明确指定封装时map的key：@Param("id")Integer id ,@Param("lastName")String Name

@@ -1,0 +1,9 @@
+这个demo是演示怎样解决demo3中死锁的
+
+解决方案1、Alice和Bobby 以相同的顺序拿取餐具
+new EaterThread("Alice",spoon,fork).start();
+new EaterThread("Bobby",fork,spoon).start(); ===> 这里将fork 和spoon 的顺序换成和Alice 拿取的顺序相同即可
+
+解决方案2、勺子和叉子成对拿取
+    这里不再单独获取勺子或叉子的锁，而是提供另外一个对象，来表示"成对的勺子和叉子"。然后假设获取实例的锁就相当于
+拿取"成对的勺子和叉子"，这样便不会发生死锁。

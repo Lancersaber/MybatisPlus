@@ -1,0 +1,210 @@
+1、多线程应用的场景
+1.1 GUI应用程序
+1.2 耗时的I/O处理
+1.3 多个客户端
+
+2、顺序、并行和并发的概念
+顺序用于表示多个操作“依次处理”。
+并行用于表示多个操作同时处理。
+
+你吃饭吃到一半，电话来了，你一直到吃完了以后才去接，这就说明你不支持并发也不支持并行。
+你吃饭吃到一半，电话来了，你停了下来接了电话，接完后继续吃饭，这说明你支持并发。
+你吃饭吃到一半，电话来了，你一边打电话一边吃饭，这说明你支持并行。
+
+并发的关键是你有处理多个任务的能力，不一定要同时。
+并行的关键是你有同时处理多个任务的能力。
+所以我认为它们最关键的点就是：是否是『同时』。
+
+☞程序的终止
+    Java 程序的终止是指除了守护线程(Daemon Thread)以外的线程全部终止。守护线程是执行后台作业的线程。
+我们可以通过设置setDaemon 方法把线程设置为守护线程。
+
+☞Thread类和Runnable方法
+    Thread类本身还实现了Runnable接口，并且持有run方法，但Thread类的run方法主体是空的，不执行任何操作。
+Thread类的run方法通常都由子类的run方法重写(override)
+
+☞java.util.concurrent.ThreadFactory中的线程创建
+    java.util.concurrent包中包含一个将线程创建抽象化的ThreadFactory接口。利用该接口，我们可以将以Runnable
+作为参数并通过new创建Thread实例的处理隐藏在ThreadFactory内部。默认的ThreadFactory对象是通过Executors.defaultThreadFactory方法获取的。
+
+☞如何唤醒被Thread.sleep休眠的线程？
+可以使用interrupt方法。
+
+☞锁和监视
+    线程的互斥机制称为监视。另外，获得锁有时也叫作"拥有(own)监视"或"持有锁"
+    当前线程是否已获取某一对象的锁可以通过Thread.holdsLock方法来确认。当前线程已获取对象obj的锁时，
+可使用assert来像下面这样来表示出来。
+    assert Thread.holdsLock(obj);
+
+3、synchronized实例方法和synchronized代码块
+    假设有如下synchronized实例方法。
+    synchronized void method(){
+        ...
+    }
+    这跟下面将方法体用synchronized代码块包围起来是等效的。
+    void method(){
+        synchronized(this){
+            ...
+        }
+    }
+
+☞也就是说，synchronized实例方法是使用this的锁来执行线程的互斥处理的。
+
+4、synchronized静态方法和synchronized代码块
+☞synchronized静态方法是使用该类的类对象的锁来执行线程的互斥处理的。Something.class是Something类对应
+的java.lang.class类的实例。
+
+5、等待队列(重点)
+    所有实例都拥有一个等待队列，它是在实例的wait方法执行后停止操作的线程的队列。它是在实例的wait方法执行后
+停止操作的线程的队列。
+    在执行wait方法后，线程便会暂停操作，进入等待队列这个休息室。除非发生下列某一情况，否则线程会一直在等待
+队列中休眠。当下列任意一种情况发生时，线程便会退出等待队列。
+    ☞有其他的线程的notify()方法来唤醒线程
+    ☞有其他的线程的notifyAll()方法来唤醒线程
+    ☞有其他的线程的interrupt()方法来唤醒线程
+    ☞wait方法超时
+
+☞若要执行wait，notify，notifyAll方法，线程必须持有锁(这是规则)，但如果线程进入等待队列，便会释放其实例的锁。
+
+☞执行notify后的线程状态
+    notify唤醒的线程并不会在执行notify的一瞬间重新运行。因为在执行notify的那一瞬间，执行notify的线程还持有着
+锁，所以其他线程还无法获取这个实例的锁。
+
+☞如果线程未持有锁会怎样呢
+    如果未持有锁的线程会调用wait、notify或notifyAll，异常java.lang.IllegalMonitorStateException会被抛出。
+
+☞wait、notify、notifyAll都是Object类中的方法，并非Thread类中的固有方法。
+
+6、线程的状态迁移(重点 见图解java多线程模式56页)
+
+判断题
+1、wait方法的调用语句必须写在synchronized 方法中。
+☞ 调用wait方法的语句可以写在synchronized 方法中和synchronized 代码块中，或者二者调用的其他方法中。
+只要执行wait方法的线程在执行时获取了对象实例的锁即可。
+
+纠错题
+1、线程的暂停
+    某人写了如下代码，想让启动的线程暂停约 1s 。但这个代码是错误的，为什么？
+    //创建实例
+    MyThread t=new MyThread();
+    //启动线程
+    t.start();
+    //暂停已启动的语句
+    try{
+        t.sleep(1000);
+    }catch(Exception e){
+
+    }
+
+ 原因 ☞这是因为，执行t.sleep(1000);暂停的并不是与t 相关的线程，而是执行这条语句的线程。
+    t.sleep(1000);
+    上面的这条语句调用的并不是t的实例方法，而是Thread的静态方法。也就是说，这等同于执行下面这条语句。
+    Thread.sleep(1000);
+    当想要暂停新启动的线程时，我们可以在MyThread类的run方法中调用sleep方法。
+
+☞ 通过实例来调用静态方法会引起误解
+    通过实例来调用静态方法的写法在语法上并没有错，但会让阅读的人误解。因此在实际程序中不能这么写。
+    t.sleep(1000);  x 引起误解的写法
+    Thread.sleep(1000) √ 最佳写法
+
+7、何时使用Single Threaded Execution模式
+    √ 多线程时
+    ☞单线程程序中并不需要使用Single Threaded Execution模式，因此也无需使用synchronized方法
+    √ 多个线程访问时
+    ☞当ShareResource角色的实例有可能被多个线程同时访问时，就需要Single Threaded Execution 模式
+    ☞即使是多线程程序，如果所有线程都是完全独立操作的，那么也无需使用Single Threaded Execution 模式。这些状态称为线程互不干涉
+    √ 状态可能发生改变时
+    ☞之所以需要使用Single Threaded Execution模式，是因为ShareResource角色的状态会发生变化。
+    如果在创建实例后，实例的状态再也不会发生变化，那么也无需使用Single Threaded Execution 模式了
+
+8、生存性和死锁
+在Single Threaded Execution模式中，满足下列条件时，死锁就会发生
+    ☞存在多个SharedResource角色
+    ☞线程在持有着某个SharedResource角色的锁的同时，还想获取其他SharedResource角色的锁
+    ☞获取SharedResource角色的锁的顺序并不固定
+☞ 只要破坏发生条件的一个，就可以防止死锁发生。
+
+☞我们将只允许单个线程执行的程序范围称为临界区。
+
+9、Guarded Suspension模式类似的处理模式的几个特征
+    ☞存在循环
+    ☞存在条件检查
+    ☞因为某种原因而等待
+
+10、Guarded Suspension模式
+说明：该模式中存在一个持有状态的对象。该对象只有在自身的状态合适时，也会允许线程执行目标处理。
+为此，我们需要首先将对象的合适状态表示为“守护条件”。然后，在执行目标处理之前，检查守护条件是否成立。
+只有当守护条件成立时，线程才会执行目标处理；而当守护条件不成立时，线程就会一直等到成立为止。
+
+11、Balking 模式
+☞   对象本身拥有状态，该对象只有在自身状态合适时才会执行处理，否则便不会执行处理。
+     我们首先将对象的合适状态表示为守护条件。然后，在执行处理之前，检查守护条件是否成立。
+只有当守护条件成立时，对象才会继续执行处理；如果守护条件不成立，则不执行处理，立即从方法中返回。
+    在java中，我们使用if来检查守护条件。balk处理的执行则是使用return从方法中退出，或者使用throw
+抛出异常。守护条件的检查处理则是使用synchronized放在临界区中。
+
+12、什么时候使用Balking模式
+    ☞并不需要执行时
+    ☞不需要等待守护条件成立时
+    ☞守护条件仅在第一次成立时
+
+
+13、理解InterruptedException异常
+可能会花费时间，但可以取消
+☞ 加了throws InterruptedException的方法可能会花费时间，但可以取消。
+
+☞interrupt方法只是改变了中断状态
+    有人也许会认为"当调用interrupt方法时，调用对象的线程就会抛出InterruptedException异常"，
+其实是一种误解。实际上，interrupt方法只是改变了线程的中断状态而已。所谓中断状态，是一种用于表示
+线程是否被中断的状态。
+    假设当线程Alice执行了wait、sleep、join而停止运行时，线程Bobby调用Alice的interrupt方法。
+这时，线程Alice的确会抛出InterruptedException异常。但这其实是因为sleep、wait、join方法内部对线程
+的中断状态进行了检查，进而抛出了InterruptedException异常。
+
+
+14、 BlockingQueue接口---阻塞队列
+☞   BlockingQueue接口表示的是在达到合适的状态之前线程一直阻塞(wait)的队列。
+BlockingQueue是java.util.Queue接口的子接口，拥有offer和poll方法等。但实际上，
+实现“阻塞”功能的方法是BlockingQueue接口固有的put方法和take方法
+
+15、Thread-Per-Message模式
+☞   Client角色调用Host角色的request方法来发出请求。该请求的实际处理则交给Helper角色的
+handle方法来执行。然而，如果Client角色的线程从request中调用handle，那么直到实际处理结束
+之前，都无法从handle返回，这也就相当于无法从request返回。这样一来request的响应性就会下降。
+    因此，Host角色会启动用于处理来自Client角色的请求的新线程，并让该新线程来调用handle。
+这样一来，发出请求的线程便可以立即从request返回。
+
+
+
+
+
+各个模式中对应java.util.concurrent中的类
+第一章 Single Threaded Execution 模式
+
+计数信号量和Semaphore类
+
+Single Threaded Execution 模式用于确保某个区域“只能由一个线程”执行。这种模式进一步扩展，以确保某个区域“最多只能由N个线程”执行。
+这时就要用计数信号量来控制线程数量。
+       java.util.concurrent 包提供了表示计数信号量的Semaphore类。
+       资源的许可个数(permits) 将通过Semaphore的构造函数来指定。
+       Semaphore 的acquire方法用于确保存在可用资源。当存在可用资源时，线程会立即从acquire 方法返回。同时信号量内部的资源个数会减1。如果
+没有可用资源，线程则阻塞在acquire 方法内，直至出现可用资源。
+       Semaphore 的release 方法用于释放资源。释放资源后，信号量内部的资源个数会增加 1.另外，如果acquire中存在等待的线程，那么其中一个线程
+会被唤醒，并从acquire 方法返回。
+
+第二章 Immutable模式
+
+涉及到以下几个类
+1、非线程安全的java.util.ArrayList类
+2、利用Collections.synchronizedList方法所进行的同步
+3、使用写时复制(copy-on-write)的java.util.concurrent.CopyOnWriteArrayList类
+
+
+第三章 Guarded Suspension模式
+
+java.util.concurrent.LinkedBlockQueue类。该类实现了java.util.concurrent.BlockingQueue接口。
+
+
+第四章 Balking模式
+
+第五章 Producer-Consumer模式

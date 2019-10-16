@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <!--project 这个元素是Maven的pom.xml文件的顶层元素。每个POM文件都是以一个project元素包裹的。-->
+    <modelVersion>4.0.0</modelVersion>
+    <!--modelVersion 这个元素指定了当前这个pom.xml文件使用的项目对象模型(POM)的版本。-->
+
+    <groupId>Test</groupId>
+    <!--groupId 这个元素表示创建这个项目的组织的唯一标识。这个元素的值是区分一个项目的关键信息之一，它的值通常是由该项目的组织的域名的反写产生的（和Java的包名的机制一样）。-->
+    <artifactId>mybatis01</artifactId>
+    <!--artifactId: 这个元素是唯一标识了该项目最终生成的artifact（可以理解为是我们编写代码产生的一个程序，所以可以理解为是手工作品）。
+    一个项目的artifact一般是一个jar文件。一个项目最终生成的artifact的名字的格式是<artifactId>-<version>.<extension>，
+    比如上面的项目生成的artifact为 myapp-1.0.jar。-->
+    <version>1.0-SNAPSHOT</version>
+    <!--version 这个元素指定了项目生成的artifact的版本号。在版本号中会包含当前项目的进度，比如这里的SNAPSHOT。-->
+
+    <dependencies>
+        <!-- https://mvnrepository.com/artifact/org.mybatis/mybatis -->
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis</artifactId>
+            <version>3.4.6</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/junit/junit -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.17</version>
+        </dependency>
+
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.17</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mybatis.generator</groupId>
+            <artifactId>mybatis-generator-core</artifactId>
+            <version>1.3.2</version>
+        </dependency>
+
+
+    </dependencies>
+
+</project>
+<!--
+pom文件表示了当前这个项目的项目对象模型（Project Object Model(POM)。
+在Maven中，POM是它进行操作的基本单位。Maven的本质是以围绕POM这个概念为中心来管理整个项目的。
+POM中包含了项目中所有和项目相关的重要的信息，并且提供了类似一站式购物那样的依赖管理方式，可以很方便的找到当前项目关联的所有依赖来项目。
+-->
