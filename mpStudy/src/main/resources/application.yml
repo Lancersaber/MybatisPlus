@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    password: 3468989340
+    username: root
+    url: jdbc:mysql://192.168.76.135:3306/mybatisplus
+    driver-class-name: com.mysql.cj.jdbc.Driver
+mybatis-plus:
+  global-config:
+    db-config:
+      id-type: auto
